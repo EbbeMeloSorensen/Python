@@ -1,0 +1,2 @@
+# Exclude misc.xml and workspace-related files
+.idea/misc.xml
