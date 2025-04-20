@@ -14,31 +14,51 @@ def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
-def get_image_date_taken(file_path):
+def get_image_date_taken(path):
     try:
-        image = Image.open(file_path)
-        exif_data = image._getexif()
-        if exif_data:
-            for tag_id, value in exif_data.items():
-                tag = TAGS.get(tag_id, tag_id)
-                if tag == "DateTimeOriginal":
-                    return value
+        with Image.open(path) as img:
+            exif_data = img._getexif()
+            if exif_data:
+                for tag_id, value in exif_data.items():
+                    tag = TAGS.get(tag_id, tag_id)
+                    if tag == 'DateTimeOriginal':
+                        return datetime.strptime(value, '%Y:%m:%d %H:%M:%S')
     except Exception as e:
+        # Optional: log or print error
         pass
-    return None
 
-def get_video_date_taken(file_path):
+    # Fallback: use file's modification time
     try:
-        parser = createParser(file_path)
+        mod_timestamp = os.path.getmtime(path)
+        return datetime.fromtimestamp(mod_timestamp)
+    except Exception as e:
+        return None
+
+def get_video_date_taken(path):
+    try:
+        parser = createParser(path)
         if not parser:
-            return None
+            raise Exception("Parser could not be created")
+
         with parser:
             metadata = extractMetadata(parser)
-        if metadata and metadata.has("creation_date"):
-            return metadata.get("creation_date")
-    except Exception:
+            if metadata:
+                # Try common video metadata tags
+                for key in ('creation_date', 'date'):
+                    if metadata.has(key):
+                        date = metadata.get(key).value
+                        if isinstance(date, datetime):
+                            return date
+    except Exception as e:
+        # Optional: log or print error
         pass
-    return None
+
+    # Fallback: use file's modification time
+    try:
+        mod_timestamp = os.path.getmtime(path)
+        return datetime.fromtimestamp(mod_timestamp)
+    except Exception as e:
+        return None
 
 def list_dates_taken(root_folder):
     supported_images = {'.jpg', '.jpeg', '.png', '.heic', '.tiff'}
