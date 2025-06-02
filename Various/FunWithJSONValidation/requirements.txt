@@ -1,0 +1,11 @@
+pandas==2.2.2
+tracematrix==1.0.1
+beautifulsoup4==4.12.3
+click==8.1.7
+pyyaml==6.0.2
+plotly==6.1.2
+seaborn==0.13.2
+SQLAlchemy==2.0.41
+geopandas==1.1.0
+lxml==5.4.0
+jsonschema==4.24.0
