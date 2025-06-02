@@ -34,10 +34,16 @@ if __name__ == '__main__':
 
     # First, I'm just gonna read a json file
     with open('myjsonfile.json', 'r', encoding='utf8') as f:
-        file_contents = json.load(f)
+        json_document = json.load(f)
 
-    print(file_contents)
+    if False:
+        print(json_document)
 
+    # Then I'm gonna validate it against the json schema
+    with open('schema_manually_corrected.json', 'r', encoding='utf8') as f:
+        json_schema = json.load(f)
+
+    validate_xml('myjsonfile.json', 'schema_manually_corrected.json')
 
 
 

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "firstname": {
+        "type": "string"
+      },
+      "surname": {
+        "type": "string"
+      },
+      "dead": {
+        "type": "boolean"
+      },
+      "color": {
+        "type": "string"
+      },
+      "legs": {
+        "type": "number"
+      },
+      "height": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "firstname",
+      "surname",
+      "dead",
+      "legs"
+    ]
+  }
+}
