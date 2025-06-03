@@ -9,6 +9,22 @@
       },
       "surname": {
         "type": "string"
+      },
+      "dead": {
+        "type": "boolean"
+      },
+      "color": {
+        "enum": [
+          "red",
+          "green",
+          "blue",
+          "yellow"]
+      },
+      "legs": {
+        "type": "number"
+      },
+      "height": {
+        "type": "number"
       }
     },
     "required": [

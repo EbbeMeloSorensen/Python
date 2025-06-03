@@ -1,0 +1,19 @@
+[
+    {
+        "firstname": "Ebbe",
+        "surname": "Sorensen",
+        "dead": false,
+        "color": "blue",
+        "legs": 2,
+        "height": 1.81
+    },
+    {
+        "firstname": "Uffe",
+        "surname": "Sorensen"
+    },
+    {
+        "surname": "Olsen",
+        "dead": true,
+        "legs": 4
+    }
+]
