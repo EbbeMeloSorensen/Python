@@ -1,3 +1,4 @@
+import os
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -6,7 +7,8 @@ import json
 #email = "you@example.com"  # Your Atlassian account email
 email = "ebbe.melo.sorensen@gmail.com"  # Your Atlassian account email
 
-api_token = "YOUR_API_TOKEN"  # Generated from Atlassian account
+#api_token = "YOUR_API_TOKEN"  # Generated from Atlassian account
+api_token = os.environ.get("ATLASSIAN_API_TOKEN")
 
 #base_url = "https://your-domain.atlassian.net/wiki"
 base_url = "https://melo.atlassian.net/wiki/"
@@ -25,7 +27,7 @@ headers = {
 
 data = {
     "type": "page",
-    "title": "My New Page from API",
+    "title": "My New Page from API - 2",
     "ancestors": [{"id": parent_page_id}],  # omit if creating at root of space
     "space": {"key": space_key},
     "body": {
