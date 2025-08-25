@@ -1,0 +1,14 @@
+Done:
+* Autogenerere en side med hello world indhold
+* Autogenerere en side med en html-bobswift makro, der peger på DMI Gitlab
+* Autogenerere en side med et antal sektioner, hver med en html-bobswift makro, der peger på DMI Gitlab
+* Opdatere en side ved at give den et helt nyt indhold - hello world
+* Opdatere en side ved at give den et helt nyt indhold - sektion med bobswift-makro
+* Inspicere en side, for at se, om den indeholder en sektion med en given titel
+* Opdatere en side ved at tilføje en sektion, medmindre den allerede er der
+
+Todo:
+* Få fat i ids på alle de direkte children, som en given Confluence side har
+* Tilføje en sektion på et antal sider i henhold til en whitelist
+* Sortere en sides sektioner i henhold til foretrukket rækkefølge
+* Opdatere en side ved at erstatte NOGET af dens indhold med noget andet - f.eks. et gitlab access token
