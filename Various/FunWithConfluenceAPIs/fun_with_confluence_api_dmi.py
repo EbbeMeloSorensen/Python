@@ -148,6 +148,29 @@ def update_confluence_page_with_arbitrary_content(
     print("Page updated successfully:", update_response.json()["title"])    
 
 
+def get_child_meta_data_for_child_pages(page_id: str):
+
+    url = f"{base_url}/rest/api/content/{page_id}/child/page"
+
+    headers = {
+        "Authorization": f"Bearer {personal_access_token}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    
+    children = []
+    for child in data.get("results", []):
+        children.append({
+            "id": child["id"],
+            "title": child["title"]
+        })
+    
+    return children
+
+
 if __name__ == "__main__":
     try:
         if False:
@@ -277,7 +300,7 @@ if __name__ == "__main__":
 
             update_confluence_page_with_arbitrary_content(page_id="222556182", new_body=new_body)
 
-        if True:
+        if False:
             content = retrieve_page_content(page_id="222556598")
             soup = BeautifulSoup(content, "html.parser")
             sections = soup.find_all("ac:layout-section")
@@ -329,8 +352,11 @@ if __name__ == "__main__":
                     page_id="222556598",
                     new_body=new_content)
 
-            #content = f"""{content}"""
-            #update_confluence_page_with_arbitrary_content(page_id="222556598", new_body=content)
+        if True:
+            meta_data_list = get_child_meta_data_for_child_pages("222553283")
+
+            for meta_data in meta_data_list:
+                print(f"id: {meta_data['id']}, title: {meta_data['title']}")
 
 
     except Exception as e:

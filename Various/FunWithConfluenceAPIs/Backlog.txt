@@ -9,6 +9,6 @@ Done:
 
 Todo:
 * Få fat i ids på alle de direkte children, som en given Confluence side har
-* Tilføje en sektion på et antal sider i henhold til en whitelist
 * Sortere en sides sektioner i henhold til foretrukket rækkefølge
+* Tilføje en sektion på et antal sider i henhold til en whitelist
 * Opdatere en side ved at erstatte NOGET af dens indhold med noget andet - f.eks. et gitlab access token
