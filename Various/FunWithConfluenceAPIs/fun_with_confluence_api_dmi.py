@@ -394,45 +394,86 @@ if __name__ == "__main__":
 
         if True:
             
-            # Virker fint - også når man fjerner spaces of line breaks
-            # new_body = f"""
-            # <ac:layout>
-            #   <ac:layout-section ac:type="single">
-            #     <ac:layout-cell>
-            #       <h1>Hallo</h1>
-            #       <p>Hallo</p>
-            #     </ac:layout-cell>
-            #   </ac:layout-section>
-            # </ac:layout>
-            # """
-
-            # new_body = f"""
-            # <ac:layout>
-            #   <ac:layout-section ac:type="single">
-            #     <ac:layout-cell>
-            #       <h1>Hallo</h1>
-            #       <h2>Hallo</h2>
-            #       <h3>Hallo</h3>
-            #       <p>Hallo</p>
-            #       <ac:structured-macro ac:name="html-bobswift">
-            #         <ac:parameter ac:name="script">#https://gitlab.dmi.dk/api/v4/projects/1392/repository/files/catalogs_generated%2Faci_mermaid_files%2FARNE.mmd/raw?ref=main&amp;private_token={gitlab_access_token}</ac:parameter>
-            #         <ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>
-            #       </ac:structured-macro>
-            #     </ac:layout-cell>
-            #   </ac:layout-section>
-            # </ac:layout>
-            # """
-
+            # En dummy sektion med lidt forskelligt indhold
+            # Virker - også når man fjerner spaces og line breaks
             new_body = f"""
             <ac:layout>
               <ac:layout-section ac:type="single">
                 <ac:layout-cell>
-                  <h1>Halli</h1>
+                  <h1>Hallo</h1>
+                  <p>Hallo</p>
+                </ac:layout-cell>
+              </ac:layout-section>
+            </ac:layout>
+            """
+
+            # En sektion med en html-bobswift macro (virker)
+            new_body = f"""
+            <ac:layout>
+              <ac:layout-section ac:type="single">
+                <ac:layout-cell>
+                  <h1>Hallo</h1>
+                  <h2>Hallo</h2>
+                  <h3>Hallo</h3>
+                  <p>Hallo</p>
+                  <ac:structured-macro ac:name="html-bobswift">
+                    <ac:parameter ac:name="script">#https://gitlab.dmi.dk/api/v4/projects/1392/repository/files/catalogs_generated%2Faci_mermaid_files%2FARNE.mmd/raw?ref=main&amp;private_token={gitlab_access_token}</ac:parameter>
+                    <ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>
+                  </ac:structured-macro>
+                </ac:layout-cell>
+              </ac:layout-section>
+            </ac:layout>
+            """
+
+            # En sektion med en json-from-table macro (virker)
+            new_body = f"""
+            <ac:layout>
+              <ac:layout-section ac:type="single">
+                <ac:layout-cell>
+                  <h1>Møjn</h1>
                   <p>Hallo</p>
                   <ac:structured-macro ac:name="json-from-table" ac:schema-version="1" ac:macro-id="8319cfea-5cc8-42d9-9955-f658410b2c5f">
                     <ac:parameter ac:name="isFirstTimeEnter">true</ac:parameter>
                     <ac:parameter ac:name="url">https://gitlab.dmi.dk/api/v4/projects/1392/repository/files/catalogs_generated%2Fqms_sections%2FAC_SAF_sys_description.json/raw?ref=main&amp;private_token={gitlab_access_token}</ac:parameter>
                   </ac:structured-macro>                  
+                </ac:layout-cell>
+              </ac:layout-section>
+            </ac:layout>
+            """
+
+            # En sektion med 3-column format
+            # Muligheder: three_equal, three_with_sidebars
+            new_body = f"""
+            <ac:layout>
+              <ac:layout-section ac:type="three_with_sidebars">
+                <ac:layout-cell>
+                  <h1>Celle 1</h1>
+                  <p>hejsa</p>
+                </ac:layout-cell>
+                <ac:layout-cell>
+                  <h1>Celle 2</h1>
+                  <p>Goddag</p>
+                </ac:layout-cell>
+                <ac:layout-cell>
+                  <h1>Celle 3</h1>
+                  <p>Kuk kuk</p>
+                </ac:layout-cell>
+              </ac:layout-section>
+            </ac:layout>
+            """
+
+            # En sektion med 2-column format
+            # Muligheder: two_equal, two_left_sidebar, two_right_sidebar
+            new_body = f"""
+            <ac:layout>
+              <ac:layout-section ac:type="two_right_sidebar">
+                <ac:layout-cell>
+                  <h1>Celle 1</h1>
+                  <p>hejsa</p>
+                </ac:layout-cell>
+                <ac:layout-cell>
+                  <h1>Celle 2</h1>
+                  <p>Goddag</p>
                 </ac:layout-cell>
               </ac:layout-section>
             </ac:layout>
