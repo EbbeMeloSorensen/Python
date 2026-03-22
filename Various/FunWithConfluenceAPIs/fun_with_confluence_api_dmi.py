@@ -218,6 +218,44 @@ def add_section(storage_format: str, new_section: str) -> str:
 
     return str(soup)
 
+def delete_section(storage_format: str,
+                   header: str) -> str:
+    
+    soup = BeautifulSoup(storage_format, "html")
+
+    # Ensure layout exists
+    layout = soup.find("ac:layout")
+
+    # Collect all existing sections
+    sections = layout.find_all("ac:layout-section", recursive=False)
+
+    # Helper to extract first header text from a section
+    def get_header_text(section):
+        header = section.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+        return header.get_text(strip=True) if header else None
+
+    index_of_section_to_delete = None
+    for i, sec in enumerate(sections):
+        if get_header_text(sec) == header:
+            index_of_section_to_delete = i
+            break
+
+    if index_of_section_to_delete is not None:
+        sections[index_of_section_to_delete].decompose()
+
+    return str(soup)
+
+def update_section(storage_format: str,
+                   header: str,
+                   new_section: str) -> str:
+    
+    # Helper to extract first header text from a section
+    def get_header_text(section):
+        header = section.find(["h1", "h2", "h3", "h4", "h5", "h6"])
+        return header.get_text(strip=True) if header else None
+
+    pass
+
 def insert_section(storage_format: str,
                    new_section: str,
                    before_headers: list[str] = None,
@@ -235,12 +273,7 @@ def insert_section(storage_format: str,
     after_headers = after_headers or []
 
     soup = BeautifulSoup(storage_format, "html")
-
-    # Ensure layout exists
     layout = soup.find("ac:layout")
-    if not layout:
-        layout = soup.new_tag("ac:layout")
-        soup.append(layout)
 
     # Parse the new section string
     new_section = BeautifulSoup(new_section, "html").find("ac:layout-section")
@@ -284,12 +317,19 @@ def insert_section(storage_format: str,
 
 if __name__ == "__main__":
     try:
-        if False:
-            #retrieve_page_content(page_id="114858299")
-            #retrieve_page_content(page_id="222553654")
-            #retrieve_page_content(page_id="222556598") # "Page that is inspected by means of the Confluence API"
-            retrieve_page_content(page_id="222556182") # "Page automatically updated by means of Confluence API"
+        # Retrieve content of a page
+        if True:
+            #content = retrieve_page_content(page_id="114858299")
+            #content = retrieve_page_content(page_id="222553654")
+            #content = retrieve_page_content(page_id="222556598") # "Page that is inspected by means of the Confluence API"
+            #content = retrieve_page_content(page_id="222556182") # "Page automatically updated by means of Confluence API"
+            #content = retrieve_page_content(page_id="231367302") # "Page with simple link
+            #content = retrieve_page_content(page_id="231367621") # page with an anchor
+            #content = retrieve_page_content(page_id="231367651") # page with a link to an anchor
+            content = retrieve_page_content(page_id="240624235") # page with a single section with a header and a draw.io drawing
+            pass
 
+        # Create a simple page
         if False:
             create_confluence_page(
                 space_key="~ebs",
@@ -304,6 +344,8 @@ if __name__ == "__main__":
                         }
                     }
                 })
+            
+        # Create a page with a macro linking to a GitLab file
         if False:
 
             body = f"""
@@ -337,6 +379,7 @@ if __name__ == "__main__":
                     }
                 })
 
+        # Create a page with multiple sections, each containing a macro linking to a GitLab file
         if False:
 
             files = [
@@ -387,12 +430,13 @@ if __name__ == "__main__":
                         }
                     }
                 })
-            
-        if False:
 
+        # Replace entire page content with new (simple) content            
+        if False:
             update_confluence_page_with_hello_world_message(page_id="222556182")
 
-        if True:
+        # Replace entire page content with new (arbitrary) content            
+        if False:
             
             # En dummy sektion med lidt forskelligt indhold
             # Virker - også når man fjerner spaces og line breaks
@@ -481,6 +525,7 @@ if __name__ == "__main__":
 
             update_confluence_page_with_arbitrary_content(page_id="222556182", new_body=new_body)
 
+        # Append a new section to an existing page (1)
         if False:
             content = retrieve_page_content(page_id="222556598")
             new_content = add_section_by_building_it_in_this_function(content, "Vælling", "Vælling")
@@ -489,6 +534,7 @@ if __name__ == "__main__":
                 page_id="222556598",
                 new_body=new_content)
 
+        # Append a new section to an existing page (2)
         if False:
             content = retrieve_page_content(page_id="222556598")
 
@@ -507,6 +553,7 @@ if __name__ == "__main__":
                 page_id="222556598",
                 new_body=new_content)
 
+        # INSERT a new section on an existing page (doesn't seem entirely reliable yet)
         if False:
             content = retrieve_page_content(page_id="222556598")
 
@@ -533,26 +580,42 @@ if __name__ == "__main__":
                 page_id="222556598",
                 new_body=new_content)
 
+        # Retrieve metadata for child pages of given page
         if False:
             meta_data_list = get_child_meta_data_for_child_pages("222553283")
 
             for meta_data in meta_data_list:
                 print(f"id: {meta_data['id']}, title: {meta_data['title']}")
 
+        # Delete an existing section from a page
         if False:
-            body = """
-            <ac:layout>
-            <ac:layout-section ac:type="single">
-                <ac:layout-cell>
-                <h1>Section 1</h1>
-                <p>Hello</p>
-                </ac:layout-cell>
-            </ac:layout-section>
-            </ac:layout>
-            """            
+            content = retrieve_page_content(page_id="222556598")
+            new_content = delete_section(content, "Section 4")
+            update_confluence_page_with_arbitrary_content(
+                page_id="222556598",
+                new_body=new_content)
+            
+        # Insert or replace (upsert) a section on an existing page
+        if True:
+            content = retrieve_page_content(page_id="222556598")
 
-            new_body = add_section(body, "Section 2", "Hello from Python")
-            print(new_body)            
+            new_section = """
+            <ac:layout-section ac:type="single">
+            <ac:layout-cell>
+                <h1>Section 4</h1>
+                <p>Page generated with upsert</p>
+            </ac:layout-cell>
+            </ac:layout-section>
+            """
+
+            new_content = upsert_section(
+                storage_format=content,
+                header="Section 4",
+                new_section=new_section)
+
+            update_confluence_page_with_arbitrary_content(
+                page_id="222556598",
+                new_body=new_content)
 
 
     except Exception as e:
