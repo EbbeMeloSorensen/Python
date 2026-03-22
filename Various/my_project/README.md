@@ -20,4 +20,8 @@ pip install --upgrade pip
 
 python -m pip install --upgrade pip
 
-#
+# I det virtuelle miljø, installer nødvendige python pakker, f.eks.
+pip install pylint
+
+# For at generere en requirements.txt fil
+pip freeze > requirements.txt
