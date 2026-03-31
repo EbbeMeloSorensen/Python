@@ -2,11 +2,102 @@ import sys
 import os
 import json
 import requests
+import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup  # reformatting of html - here content of a Confluence page
 
 base_url = "https://confluence.dmi.dk"
 personal_access_token = os.environ.get("ATLASSIAN_API_TOKEN_DMI")
 gitlab_access_token = os.environ.get("GITLAB_TOKEN")
+
+def retrieve_attachment_info(page_id, attachment_name):
+    url = f"{base_url}/rest/api/content/{page_id}/child/attachment"
+    params = {"expand": "body.storage,version"}
+    headers = {"Authorization": f"Bearer {personal_access_token}"}
+
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params
+    )
+
+    links = None
+
+    if response.status_code == 200:
+        data = response.json()
+        results = data['results']
+        for result in results:
+            attachment_id = result['id']
+            title = result['title']
+            #print(f"Attachment ID: {attachment_id}, Title: {title}")
+
+            if title == attachment_name:
+                print(f"Found attachment with ID: {attachment_id} and title: {title}")
+                links = result['_links']
+                break
+
+    if links is not None:
+        pass
+
+    download = links['download']
+
+    url = f"{base_url}{download}"
+    headers = {"Authorization": f"Bearer {personal_access_token}"}
+
+    response = requests.get(
+        url,
+        headers=headers
+    )
+
+    # THIS IS THE XML CONTENT OF THE DRAW.IO FILE !!!!!
+    text = response.text
+
+    # Write it to file, just for fun
+    output_filename = "diagram.drawio.xml"
+
+    with open(output_filename, "w", encoding="utf-8") as f:
+        f.write(text)    
+
+    # Extraxt rectangles from the XML content
+    root = ET.fromstring(text)
+
+    # --- STEP 2: find all <mxCell> elements ---
+    mx_cells = root.findall(".//mxCell")
+    print(f"Found {len(mx_cells)} mxCell elements")
+
+    # Her har vi så lige en embedded funktion
+    # --- STEP 3: parse attributes and style ---
+    def parse_style(style_str):
+        """Convert draw.io style string into a dict"""
+        style_dict = {}
+        for item in style_str.split(";"):
+            if "=" in item:
+                key, val = item.split("=", 1)
+                style_dict[key] = val
+        return style_dict
+        
+    for cell in mx_cells:
+        value = cell.attrib.get("value", "")
+        style = cell.attrib.get("style", "")
+        style_dict = parse_style(style)
+        stroke_color = style_dict.get("strokeColor", "")
+        fill_color = style_dict.get("fillColor", "")
+
+        # geometry info (if present)
+        geometry = cell.find("mxGeometry")
+        if geometry is not None:
+            x = geometry.attrib.get("x")
+            y = geometry.attrib.get("y")
+            width = geometry.attrib.get("width")
+            height = geometry.attrib.get("height")
+        else:
+            x = y = width = height = None        
+
+        print(f"Value: {value}")
+        print(f"Stroke: {stroke_color}, Fill: {fill_color}")
+        print(f"x={x}, y={y}, width={width}, height={height}")
+        print("---")
+
+    pass
 
 def retrieve_page_content(page_id) -> str:
     url = f"{base_url}/rest/api/content/{page_id}"
@@ -317,8 +408,16 @@ def insert_section(storage_format: str,
 
 if __name__ == "__main__":
     try:
-        # Retrieve content of a page
+        if False:
+            retrieve_attachment_info_chatgpt()
+
         if True:
+            retrieve_attachment_info(
+                page_id="240624235",
+                attachment_name="Untitled Diagram-1764167134029")
+
+        # Retrieve content of a page
+        if False:
             #content = retrieve_page_content(page_id="114858299")
             #content = retrieve_page_content(page_id="222553654")
             #content = retrieve_page_content(page_id="222556598") # "Page that is inspected by means of the Confluence API"
@@ -326,7 +425,7 @@ if __name__ == "__main__":
             #content = retrieve_page_content(page_id="231367302") # "Page with simple link
             #content = retrieve_page_content(page_id="231367621") # page with an anchor
             #content = retrieve_page_content(page_id="231367651") # page with a link to an anchor
-            content = retrieve_page_content(page_id="240624235") # page with a single section with a header and a draw.io drawing
+            content = retrieve_page_content(page_id="240624235") # page with a single section with a header and a draw.io drawing (https://confluence.dmi.dk/pages/viewinfo.action?pageId=240624235)
             pass
 
         # Create a simple page
