@@ -25,3 +25,6 @@ pip install pylint
 
 # For at generere en requirements.txt fil
 pip freeze > requirements.txt
+
+# For at teste med pytest
+Eksekver: pytest
